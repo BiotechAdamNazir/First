@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subang Jaya Tuition Growth Platform</title>
+    <meta name="theme-color" content="#4f46e5" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Subang Jaya Tuition Growth Platform</h1>
+      <p>Commercial-ready tuition center software for better exam outcomes + joyful learning.</p>
+    </header>
+
+    <main>
+      <section class="card">
+        <h2>Register Student</h2>
+        <form id="studentForm">
+          <input name="fullName" placeholder="Student full name" required />
+          <input name="schoolLevel" placeholder="School level (e.g. Primary 5)" required />
+          <input name="parentName" placeholder="Parent/Guardian name" required />
+          <input type="email" name="parentEmail" placeholder="Parent email" />
+          <textarea name="goals" placeholder="Learning goals and attitude targets"></textarea>
+          <button type="submit">Add Student</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>Record Assessment</h2>
+        <form id="assessmentForm">
+          <select name="studentId" id="studentSelect" required></select>
+          <input name="subject" placeholder="Subject" required />
+          <input name="examName" placeholder="Exam / Quiz name" required />
+          <input type="number" name="score" placeholder="Score" required />
+          <input type="number" name="maxScore" placeholder="Max score" required />
+          <input type="date" name="satDate" required />
+          <button type="submit">Save Result</button>
+        </form>
+      </section>
+
+      <section class="card full">
+        <h2>Leadership & Growth Dashboard</h2>
+        <div class="grid">
+          <div>
+            <h3>Leaderboard</h3>
+            <ul id="leaderboard"></ul>
+          </div>
+          <div>
+            <h3>Average Exam Performance</h3>
+            <ul id="progress"></ul>
+          </div>
+          <div>
+            <h3>Recent Engagement</h3>
+            <ul id="events"></ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
