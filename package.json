@@ -1,0 +1,17 @@
+{
+  "name": "tuition-growth-platform",
+  "version": "1.0.0",
+  "description": "Web + mobile-ready tuition center management platform for Malaysia",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "check": "node --check src/server.js && node --check public/app.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "sqlite3": "^5.1.7"
+  }
+}
