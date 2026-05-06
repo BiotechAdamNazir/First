@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>A Spark of Wisdom</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,400&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; }
+
+  body {
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a14 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 1.2s ease;
+    position: relative;
+  }
+
+  body.lit {
+    background: radial-gradient(ellipse at center,
+      #ffd5a8 0%,
+      #ffb088 25%,
+      #d97aa8 55%,
+      #6b4a9e 85%,
+      #1a1a2e 100%);
+  }
+
+  .stars, .stars::before, .stars::after {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, #fff, transparent),
+      radial-gradient(1px 1px at 70% 80%, #fff, transparent),
+      radial-gradient(2px 2px at 40% 50%, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1px 1px at 90% 20%, #fff, transparent),
+      radial-gradient(1px 1px at 10% 70%, rgba(255,255,255,0.8), transparent),
+      radial-gradient(2px 2px at 60% 10%, #fff, transparent);
+    background-size: 100% 100%;
+    opacity: 0.6;
+    transition: opacity 1.2s ease;
+  }
+  body.lit .stars { opacity: 0; }
+
+  .center {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    max-width: 900px;
+  }
+
+  .spark-btn {
+    position: relative;
+    padding: 1.2rem 2.6rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 999px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all 0.4s ease;
+    box-shadow: 0 0 30px rgba(255, 200, 150, 0.1), inset 0 0 20px rgba(255,255,255,0.03);
+  }
+  .spark-btn:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.6);
+    box-shadow: 0 0 60px rgba(255, 180, 120, 0.4), inset 0 0 30px rgba(255,255,255,0.08);
+  }
+  .spark-btn:active { transform: translateY(0); }
+  .spark-btn.hidden { opacity: 0; pointer-events: none; transform: scale(0.9); }
+
+  .quote-stage {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.4s ease 0.3s;
+  }
+  .quote-stage.visible { opacity: 1; pointer-events: auto; }
+
+  blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    line-height: 1.3;
+    max-width: 900px;
+    color: #fff;
+    text-shadow: 0 2px 30px rgba(0,0,0,0.4), 0 0 80px rgba(255,220,180,0.3);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.6s ease 0.6s, transform 1.6s ease 0.6s;
+  }
+  .quote-stage.visible blockquote { opacity: 1; transform: translateY(0); }
+
+  blockquote::before, blockquote::after {
+    color: rgba(255,255,255,0.5);
+    font-size: 1.4em;
+    line-height: 0;
+    position: relative;
+  }
+  blockquote::before { content: '“'; margin-right: 0.1em; top: 0.3em; }
+  blockquote::after { content: '”'; margin-left: 0.05em; top: 0.3em; }
+
+  .author {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.85);
+    opacity: 0;
+    transition: opacity 1.6s ease 1.2s;
+  }
+  .quote-stage.visible .author { opacity: 1; }
+
+  .again {
+    position: absolute;
+    bottom: 3rem;
+    padding: 0.6rem 1.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.9);
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 999px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 1.6s ease 1.6s, all 0.3s ease;
+  }
+  .quote-stage.visible .again { opacity: 1; }
+  .again:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.7); }
+
+  .glow {
+    position: absolute;
+    width: 100vmax;
+    height: 100vmax;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,220,180,0.5) 0%, transparent 60%);
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 1.4s ease, transform 1.4s ease;
+    z-index: 1;
+  }
+  body.lit .glow { opacity: 0.7; transform: scale(1); }
+
+  .hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    transition: opacity 0.6s ease;
+  }
+  body.lit .hint { opacity: 0; }
+</style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="glow"></div>
+
+  <div class="center">
+    <button class="spark-btn" id="sparkBtn">Reveal a Quote</button>
+
+    <div class="quote-stage" id="quoteStage">
+      <blockquote id="quoteText"></blockquote>
+      <div class="author" id="quoteAuthor"></div>
+      <button class="again" id="againBtn">Another</button>
+    </div>
+  </div>
+
+  <div class="hint">press the button</div>
+
+<script>
+  const FALLBACK_QUOTES = [
+    { q: "Simplicity is the ultimate sophistication.", a: "Leonardo da Vinci" },
+    { q: "Stay hungry, stay foolish.", a: "Stewart Brand" },
+    { q: "The important thing is not to stop questioning. Curiosity has its own reason for existing.", a: "Albert Einstein" },
+    { q: "I have no special talent. I am only passionately curious.", a: "Albert Einstein" },
+    { q: "Live as if you were to die tomorrow. Learn as if you were to live forever.", a: "Mahatma Gandhi" },
+    { q: "The mind that opens to a new idea never returns to its original size.", a: "Albert Einstein" },
+    { q: "Optimism is the faith that leads to achievement. Nothing can be done without hope and confidence.", a: "Helen Keller" },
+    { q: "Keep your face always toward the sunshine—and shadows will fall behind you.", a: "Walt Whitman" },
+    { q: "In the middle of difficulty lies opportunity.", a: "Albert Einstein" },
+    { q: "Make everything as simple as possible, but not simpler.", a: "Albert Einstein" },
+    { q: "The cure for boredom is curiosity. There is no cure for curiosity.", a: "Dorothy Parker" },
+    { q: "Anyone who stops learning is old, whether at twenty or eighty.", a: "Henry Ford" },
+    { q: "Once you choose hope, anything's possible.", a: "Christopher Reeve" },
+    { q: "Be curious, not judgmental.", a: "Walt Whitman" },
+    { q: "The only true wisdom is in knowing you know nothing.", a: "Socrates" },
+    { q: "Wherever you go, go with all your heart.", a: "Confucius" },
+    { q: "What we plant in the soil of contemplation, we shall reap in the harvest of action.", a: "Meister Eckhart" },
+    { q: "The future belongs to the curious.", a: "Anonymous" },
+    { q: "Learning never exhausts the mind.", a: "Leonardo da Vinci" },
+    { q: "Hope is being able to see that there is light despite all of the darkness.", a: "Desmond Tutu" }
+  ];
+
+  const TAGS = ['wisdom', 'inspirational', 'learning', 'happiness'];
+
+  async function fetchQuote() {
+    try {
+      const tag = TAGS[Math.floor(Math.random() * TAGS.length)];
+      const res = await fetch(`https://api.quotable.io/random?tags=${tag}`, { cache: 'no-store' });
+      if (!res.ok) throw new Error('bad response');
+      const data = await res.json();
+      if (data.content && data.author) return { q: data.content, a: data.author };
+    } catch (e) { /* fall through */ }
+    return FALLBACK_QUOTES[Math.floor(Math.random() * FALLBACK_QUOTES.length)];
+  }
+
+  const sparkBtn = document.getElementById('sparkBtn');
+  const againBtn = document.getElementById('againBtn');
+  const stage = document.getElementById('quoteStage');
+  const quoteText = document.getElementById('quoteText');
+  const quoteAuthor = document.getElementById('quoteAuthor');
+
+  async function reveal() {
+    sparkBtn.classList.add('hidden');
+    stage.classList.remove('visible');
+    document.body.classList.add('lit');
+    const { q, a } = await fetchQuote();
+    quoteText.textContent = q;
+    quoteAuthor.textContent = '— ' + a;
+    requestAnimationFrame(() => stage.classList.add('visible'));
+  }
+
+  async function another() {
+    stage.classList.remove('visible');
+    setTimeout(async () => {
+      const { q, a } = await fetchQuote();
+      quoteText.textContent = q;
+      quoteAuthor.textContent = '— ' + a;
+      requestAnimationFrame(() => stage.classList.add('visible'));
+    }, 700);
+  }
+
+  sparkBtn.addEventListener('click', reveal);
+  againBtn.addEventListener('click', another);
+</script>
+</body>
+</html>
