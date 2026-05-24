@@ -229,6 +229,49 @@ function renderOutput() {
       expContainer.appendChild(li2);
     }
   }
+
+  // Definition lookup
+  const defKey = `${state.awalan || ''}|${state.akhiran || ''}`;
+  const def = wordData?.terbitan?.[defKey];
+  renderDefinisi(def, result, !!(state.awalan || state.akhiran));
+}
+
+function renderDefinisi(def, word, hasAffix) {
+  const card = document.getElementById('definisi-card');
+  const content = document.getElementById('definisi-content');
+
+  if (!hasAffix) {
+    card.hidden = true;
+    return;
+  }
+
+  card.hidden = false;
+  const prpmUrl = `https://prpm.dbp.gov.my/Cari1?keyword=${encodeURIComponent(word)}`;
+
+  if (def) {
+    content.innerHTML = `
+      <div class="def-blocks">
+        <div class="def-block bm">
+          <div class="def-label">Bahasa Melayu &nbsp;·&nbsp; PRPM DBP</div>
+          <div class="def-text">"${def.dbp}"</div>
+        </div>
+        <div class="def-block en">
+          <div class="def-label">English</div>
+          <div class="def-text">"${def.en}"</div>
+        </div>
+      </div>
+      <div class="def-attribution">
+        Berdasarkan <a href="${prpmUrl}" target="_blank" rel="noopener">PRPM DBP</a>
+        &nbsp;·&nbsp; Semak definisi penuh di prpm.dbp.gov.my
+      </div>`;
+  } else {
+    content.innerHTML = `
+      <div class="def-fallback">
+        Tiada definisi tersimpan untuk kombinasi ini.
+        Sila semak di
+        <a href="${prpmUrl}" target="_blank" rel="noopener">PRPM DBP → <em>${word}</em></a>
+      </div>`;
+  }
 }
 
 function render() {

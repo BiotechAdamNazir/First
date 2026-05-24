@@ -205,6 +205,66 @@ select:focus { outline: none; border-color: var(--awalan-color); }
 #explanation-list li strong { color: var(--text); }
 #explanation-list li em { color: var(--awalan-color); font-style: normal; font-weight: 600; }
 
+/* ── Definition card ─────────────────────────────────────── */
+.def-blocks {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: .75rem;
+  margin-bottom: .75rem;
+}
+@media (min-width: 640px) {
+  .def-blocks { grid-template-columns: 1fr 1fr; }
+}
+
+.def-block {
+  padding: .9rem 1.1rem;
+  border-radius: 8px;
+}
+.def-block.bm {
+  background: #f0fdf4;
+  border-left: 3px solid var(--dasar-color);
+}
+.def-block.en {
+  background: #eff6ff;
+  border-left: 3px solid var(--awalan-color);
+}
+.def-label {
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--text-muted);
+  margin-bottom: .4rem;
+}
+.def-text {
+  font-size: .95rem;
+  line-height: 1.6;
+  font-style: italic;
+  color: var(--text);
+}
+.def-attribution {
+  font-size: .78rem;
+  color: var(--text-muted);
+}
+.def-attribution a {
+  color: var(--awalan-color);
+  text-decoration: none;
+}
+.def-attribution a:hover { text-decoration: underline; }
+
+.def-fallback {
+  font-size: .9rem;
+  color: var(--text-muted);
+  padding: .75rem 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+}
+.def-fallback a {
+  color: var(--awalan-color);
+  font-weight: 600;
+}
+
 /* ── Legend ───────────────────────────────────────────────── */
 .legend {
   display: flex;
