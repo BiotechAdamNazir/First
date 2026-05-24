@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pembina Kata — Proses Pengimbuhan Bahasa Melayu</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h1>Pembina <span>Kata</span></h1>
+  <p>Proses Pengimbuhan Bahasa Melayu &nbsp;·&nbsp; Bina kata terbitan langkah demi langkah</p>
+</header>
+
+<div class="layout">
+
+  <!-- Level selector -->
+  <div class="card full">
+    <h2>Peringkat Pembelajaran</h2>
+    <div id="level-buttons"></div>
+  </div>
+
+  <!-- Left column: controls -->
+  <div class="card">
+    <h2>Kata Dasar</h2>
+    <div class="word-row">
+      <select id="kata-dasar-select"></select>
+      <span id="root-meaning"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Pilih Imbuhan</h2>
+    <div class="affix-group">
+      <label>Awalan</label>
+      <div id="awalan-buttons"></div>
+    </div>
+    <div class="affix-group">
+      <label>Akhiran</label>
+      <div id="akhiran-buttons"></div>
+    </div>
+  </div>
+
+  <!-- Visualisation -->
+  <div class="card full vis-card">
+    <h2>Visualisasi Kata Terbitan</h2>
+    <div id="formula-line"></div>
+    <div id="word-segments"></div>
+    <div id="result-word">—</div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot awalan"></div><span>Awalan</span></div>
+      <div class="legend-item"><div class="legend-dot dasar"></div><span>Kata Dasar</span></div>
+      <div class="legend-item"><div class="legend-dot akhiran"></div><span>Akhiran</span></div>
+      <div class="legend-item"><div class="legend-dot dropped"></div><span>Huruf gugur</span></div>
+    </div>
+  </div>
+
+  <!-- Explanation -->
+  <div class="card full">
+    <h2>Penjelasan</h2>
+    <ul id="explanation-list"></ul>
+  </div>
+
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
