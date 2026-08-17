@@ -1,0 +1,24 @@
+{
+  "name": "snapback",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "icons": "node scripts/make-icons.mjs",
+    "build:test": "VITE_SUPABASE_URL=http://127.0.0.1:5599 VITE_SUPABASE_ANON_KEY=test-key vite build --outDir dist-test",
+    "check": "node scripts/check-logic.mjs && npm run build:test && node scripts/check-app.mjs",
+    "shots": "npm run build:test && node scripts/shot.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.5",
+    "vite": "^8.2.1"
+  }
+}

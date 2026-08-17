@@ -1,0 +1,9 @@
+EB Garamond
+Copyright the EB Garamond Project Authors (https://github.com/octaviopardo/EBGaramond12)
+
+Licensed under the SIL Open Font License, Version 1.1.
+https://openfontlicense.org
+
+The files here are the latin and latin-extended subsets of the regular weight,
+taken from Google Fonts and served from this site so that the app does not
+depend on anyone else's server.

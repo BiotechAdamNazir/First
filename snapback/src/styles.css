@@ -1,0 +1,312 @@
+/* The face is served from this site rather than from Google, so the screen
+   never waits on someone else's server and works with no signal at all.
+   EB Garamond, SIL Open Font License 1.1 — see public/fonts/NOTICE.txt */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/eb-garamond-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/eb-garamond-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  --ground: #0a0a0b;
+  --ink: #e9e3d9;
+  --ink-dim: #7c766c;
+  --ink-faint: #4a463f;
+
+  --serif: 'EB Garamond', 'Iowan Old Style', 'Palatino Linotype', Palatino,
+    Georgia, 'Times New Roman', serif;
+
+  --fade: 1800ms;
+  --ease: cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--ground);
+}
+
+body {
+  color: var(--ink);
+  font-family: var(--serif);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+::selection {
+  background: rgba(233, 227, 217, 0.16);
+}
+
+/* --- shared layout -------------------------------------------------------- */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  padding: calc(env(safe-area-inset-top) + 2rem) 1.75rem
+    calc(env(safe-area-inset-bottom) + 1.5rem);
+}
+
+.stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.25rem;
+  padding: 2rem 0;
+}
+
+/* --- the sentence --------------------------------------------------------- */
+
+.sentence {
+  margin: 0;
+  max-width: 14em;
+  font-size: clamp(1.85rem, 7vw, 3rem);
+  font-weight: 400;
+  line-height: 1.34;
+  letter-spacing: 0.004em;
+  text-align: center;
+  text-wrap: balance;
+  hyphens: none;
+}
+
+/* A note in the margin, set in the same hand as the sentence. */
+.anniversary {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+/* --- the two answers ------------------------------------------------------ */
+
+.answers {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.answer {
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--ink-dim);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  padding: 1rem 1.35rem;
+  cursor: pointer;
+  transition: color 400ms var(--ease), opacity 400ms var(--ease);
+}
+
+.answer:active {
+  color: var(--ink);
+}
+
+.answer:disabled {
+  opacity: 0.4;
+}
+
+/* --- the quiet state ------------------------------------------------------ */
+
+.rule {
+  width: 1.75rem;
+  height: 1px;
+  background: var(--ink-faint);
+}
+
+/* --- the corner mark ------------------------------------------------------ */
+
+.mark {
+  position: fixed;
+  top: env(safe-area-inset-top);
+  right: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: var(--ink-faint);
+  transition: color 400ms var(--ease);
+}
+
+.mark:active {
+  color: var(--ink-dim);
+}
+
+.mark span,
+.mark span::before {
+  content: '';
+  display: block;
+  background: currentColor;
+}
+
+.mark span {
+  position: relative;
+  width: 11px;
+  height: 1px;
+}
+
+.mark span::before {
+  position: absolute;
+  left: 5px;
+  top: -5px;
+  width: 1px;
+  height: 11px;
+}
+
+/* --- writing -------------------------------------------------------------- */
+
+.compose {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.field {
+  width: 100%;
+  min-height: 7rem;
+  resize: none;
+  border: 0;
+  /* A single ruled line, so the empty screen shows where writing happens. */
+  border-bottom: 1px solid var(--ink-faint);
+  padding: 0 0 0.75rem;
+  outline: none;
+  background: none;
+  color: var(--ink);
+  caret-color: var(--ink-dim);
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 5vw, 1.7rem);
+  line-height: 1.5;
+  letter-spacing: 0.004em;
+}
+
+.field::placeholder {
+  color: var(--ink-faint);
+}
+
+.keep {
+  align-self: center;
+  appearance: none;
+  border: 0;
+  background: none;
+  color: var(--ink-dim);
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  padding: 1rem 1.35rem;
+  cursor: pointer;
+  transition: color 400ms var(--ease), opacity 400ms var(--ease);
+}
+
+.keep:active {
+  color: var(--ink);
+}
+
+.keep:disabled {
+  opacity: 0.3;
+}
+
+/* --- confirmations and failures ------------------------------------------- */
+
+.murmur {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+.trouble {
+  margin: 0;
+  max-width: 24em;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+/* On a tablet the sentence should hold the room rather than sit in it. */
+@media (min-width: 900px) and (min-height: 620px) {
+  .sentence {
+    font-size: 3.5rem;
+  }
+
+  .anniversary {
+    font-size: 1.05rem;
+  }
+
+  .answer,
+  .keep {
+    font-size: 1.2rem;
+  }
+
+  .field {
+    font-size: 2rem;
+  }
+}
+
+/* --- motion --------------------------------------------------------------- */
+
+.fade {
+  animation: fade var(--fade) var(--ease) both;
+}
+
+.fade-slow {
+  animation: fade var(--fade) var(--ease) 160ms both;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade,
+  .fade-slow {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}
