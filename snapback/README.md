@@ -90,9 +90,10 @@ for a moment. There is no editing step and no confirmation — that is the point
 3. From what is left, one is drawn at random, where each sentence holds
    `resonance + 1` tickets. A sentence you have never marked still has one
    ticket; one you have marked five times has six.
-4. **The choice is fixed for the whole day.** Closing and reopening returns the
-   same sentence. It is decided once, written down on the device, and re-read
-   after that.
+4. **The choice is fixed for the whole day, on every device.** Closing and
+   reopening returns the same sentence, and so does picking up the tablet
+   instead of the phone. The database is the only record of the choice:
+   tonight's sentence is simply whichever one was first shown today.
 
 A day here means a calendar day in **Asia/Kuala_Lumpur**, whatever timezone the
 device thinks it is in. So it turns over at midnight in KL, not at midnight
@@ -107,6 +108,10 @@ Two things the specification did not say, decided this way:
   leave a quiet screen, and reopening the app that same day leaves it quiet.
   Re-showing the sentence after you had already answered seemed worse than the
   small cost of a mis-tap.
+- **Your answer is remembered per device.** The table has nowhere to record
+  "answered tonight" without adding a column, so if you tap *Landed* on the
+  phone, the tablet will still offer the same sentence with its two answers.
+  Tapping *Landed* on both counts twice.
 
 ---
 
@@ -177,7 +182,7 @@ npm run dev                  # a local copy at http://localhost:5173
 
 `npm run check` runs 17 checks on the date and drawing arithmetic, then builds
 the app, serves it against a stand-in for Supabase, and drives a real browser
-through 38 more: that one sentence comes back, that it does not move all day,
+through 42 more: that one sentence comes back, that it does not move all day,
 that the anniversary line appears, that the fourteen-day rest holds, that both
 write paths save, and that the share target is registered. It needs Chromium;
 set `CHROME_PATH` if it is not at `/opt/pw-browsers/chromium`.

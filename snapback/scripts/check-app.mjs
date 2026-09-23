@@ -159,6 +159,12 @@ async function run() {
   }
   check('reopening returns the same sentence all day', stable, `first showed "${shown}"`);
 
+  // Another device has no local memory at all; wiping this browser's storage
+  // is the same as picking up the tablet.
+  await open('/');
+  await waitFor("document.querySelector('.sentence')?.textContent", 'a sentence');
+  check('a second device is given the same sentence', (await sentence()) === shown, await sentence());
+
   const afterShowing = await storedRows();
   const chosen = afterShowing.find((row) => row.text === shown);
   check('last_shown is recorded on display', Boolean(chosen.last_shown), chosen.last_shown);
@@ -220,12 +226,36 @@ async function run() {
       'you wrote this a year ago tonight'
   );
 
+  await open('/');
+  await waitFor("document.querySelector('.sentence')", 'a sentence');
+  check(
+    'the line is still there on another device',
+    (await sentence()) === 'the old one' &&
+      (await evaluate("return Boolean(document.querySelector('.anniversary'));"))
+  );
+
   await seed([{ text: 'ordinary', resonance: 0 }]);
   await open('/');
   await waitFor("document.querySelector('.sentence')", 'a sentence');
   check(
     'the line stays away on an ordinary night',
     await evaluate("return !document.querySelector('.anniversary');")
+  );
+
+  await seed([
+    { text: 'already read tonight elsewhere', last_shown: new Date().toISOString(), resonance: 0 },
+    { text: 'heavily weighted', resonance: 500 },
+  ]);
+  await open('/');
+  await waitFor("document.querySelector('.sentence')", 'a sentence');
+  check(
+    "a sentence another device showed tonight is the one returned",
+    (await sentence()) === 'already read tonight elsewhere',
+    await sentence()
+  );
+  check(
+    'and nothing new is marked as shown',
+    (await storedRows()).find((row) => row.text === 'heavily weighted').last_shown === null
   );
 
   console.log('\n— the fourteen day rest —');
