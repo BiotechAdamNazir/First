@@ -1,0 +1,34 @@
+{
+  "brand": {
+    "name": "Pusat Tuisyen Cahaya Ilmu",
+    "phone": "012-345 6789",
+    "social": "@cahayailmu.tuisyen",
+    "address": "Seksyen 7, Shah Alam",
+    "palette": "navy-gold"
+  },
+  "posts": [
+    {
+      "name": "mon-countdown",
+      "template": "countdown",
+      "size": "story",
+      "values": { "days": "40", "message": "Tinggal 40 hari!\nJom sertai *Kem Intensif SPM* hujung minggu ini." }
+    },
+    {
+      "name": "wed-tip-addmath",
+      "template": "tips",
+      "size": "portrait",
+      "values": {
+        "eyebrow": "Tips Add Maths",
+        "title": "3 Silap Biasa dalam\n*Pembezaan*",
+        "titleEn": "3 common differentiation mistakes",
+        "tips": "Lupa hukum rantai | Bezakan fungsi luar, darab dengan terbitan fungsi dalam.\nTersalah tanda | Terbitan kos x ialah −sin x, bukan sin x.\nTak semak jawapan | Gantikan nilai x untuk semak kecerunan."
+      }
+    },
+    {
+      "name": "fri-promo",
+      "template": "promo",
+      "size": "all",
+      "values": { "eyebrow": "Promosi Adik-Beradik", "big": "RM50", "bigLabel": "POTONGAN", "title": "Daftar *2 beradik*,\njimat lebih", "titleEn": "Register 2 siblings and save", "deadline": "Sehingga 31 Disember 2026" }
+    }
+  ]
+}

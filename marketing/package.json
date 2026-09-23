@@ -1,0 +1,12 @@
+{
+  "name": "tuition-poster-studio",
+  "private": true,
+  "description": "Marketing poster templates for a tuition centre: edit in the browser, export PNG.",
+  "scripts": {
+    "samples": "node render.js",
+    "render": "node render.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.0"
+  }
+}

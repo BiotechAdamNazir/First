@@ -1,4 +1,15 @@
-# Pembina Kata
+# Poster Studio + Pembina Kata
+
+This repo now has two things:
+
+- **[`marketing/`](marketing/): Poster Studio.** 13 bilingual (BM + English) marketing poster templates for the tuition centre. Open `marketing/index.html`, edit, and download PNGs for Instagram, Facebook, WhatsApp Status and TikTok. See [marketing/README.md](marketing/README.md).
+- **Pembina Kata** (below, in the root folder): the interactive Malay word-formation app.
+
+[![Poster templates](marketing/samples/overview.jpg)](marketing/README.md)
+
+---
+
+## Pembina Kata
 
 Aplikasi web interaktif untuk memvisualisasikan proses pengimbuhan Bahasa Melayu.
 
@@ -7,11 +18,11 @@ Pelajar memilih kata dasar dan imbuhan, kemudian app menunjukkan:
 - Huruf yang gugur (contoh: me- + tulis → menulis, huruf 't' gugur)
 - Penjelasan langkah demi langkah mengikut hukum penyerapan nasal
 
-## Cara Guna
+### Cara Guna
 
 Buka `index.html` terus dalam pelayar web — tiada pelayan atau pemasangan diperlukan.
 
-## Peringkat
+### Peringkat
 
 | Peringkat | Skop |
 |-----------|------|
@@ -19,7 +30,7 @@ Buka `index.html` terus dalam pelayar web — tiada pelayan atau pemasangan dipe
 | Pertengahan | me- dengan penyerapan nasal + akhiran -kan, -an, -i |
 | Lanjutan | Apitan: me-…-kan, ke-…-an, pe-…-an |
 
-## Fail
+### Fail
 
 | Fail | Keterangan |
 |------|-----------|

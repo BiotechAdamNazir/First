@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poster Studio</title>
+  <link rel="stylesheet" href="editor.css">
+  <script src="vendor/fonts.js"></script>
+  <script src="poster-styles.js"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- Left: template gallery -->
+    <aside class="gallery" aria-label="Templates">
+      <div class="app-title">
+        <b>Poster Studio</b>
+        <small>Templat pemasaran tuisyen · Tuition marketing templates</small>
+      </div>
+      <div id="gallery"></div>
+    </aside>
+
+    <!-- Centre: live preview -->
+    <main class="preview">
+      <div class="toolbar">
+        <div class="seg" id="sizes" role="tablist" aria-label="Size"></div>
+        <div class="actions">
+          <button class="btn primary" id="dl">Muat turun PNG · Download</button>
+          <button class="btn" id="dl-all" title="Square, portrait and story in one go">Semua saiz · All sizes</button>
+        </div>
+      </div>
+      <div class="stage" id="stage"><div class="frame" id="frame"></div></div>
+      <p class="size-hint" id="size-hint"></p>
+    </main>
+
+    <!-- Right: editing -->
+    <aside class="panel" aria-label="Edit">
+      <section>
+        <div class="panel-h">
+          <h2 id="tpl-name">Teks · Text</h2>
+          <button class="link" id="reset" title="Put back this template's example text">Reset</button>
+        </div>
+        <p class="tip">Tip: <code>*perkataan*</code> = highlight · a line = an item · <code>|</code> separates columns</p>
+        <form id="fields" onsubmit="return false"></form>
+      </section>
+
+      <section>
+        <div class="panel-h"><h2>Warna · Colours</h2></div>
+        <div class="swatches" id="palettes"></div>
+        <div class="row2">
+          <label>Utama · Primary <input type="color" id="c-primary"></label>
+          <label>Aksen · Accent <input type="color" id="c-accent"></label>
+        </div>
+      </section>
+
+      <details class="brand-box" id="brand-box">
+        <summary><h2>Jenama · Brand</h2><small>name, logo, contacts, used on every poster</small></summary>
+        <form id="brand" onsubmit="return false"></form>
+      </details>
+
+      <section>
+        <div class="panel-h"><h2>Simpan · Save</h2></div>
+        <p class="tip">Save everything (brand + all your texts) as a file you can keep, share or load again later.</p>
+        <div class="row2">
+          <button class="btn" id="save-json">Simpan fail · Save file</button>
+          <label class="btn file-btn">Buka fail · Load file<input type="file" id="load-json" accept="application/json,.json" hidden></label>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <!-- Posters for export are built here, off-screen, at full size. -->
+  <div id="offscreen" aria-hidden="true"></div>
+  <!-- Used by render-samples.js (?render=1) -->
+  <div id="render-root"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="brand.js"></script>
+  <script src="templates.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>
