@@ -352,6 +352,105 @@ async function run() {
       (await evaluate("return document.querySelector('.murmur')?.textContent;")) === 'nothing to keep'
   );
 
+  console.log('\n— without signal —');
+
+  const setMood = (mood) =>
+    fetch(`${SITE}/__mood`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ mood }),
+    });
+  const held = () => evaluate("return JSON.parse(localStorage.getItem('snapback.held') || '[]');");
+
+  await seed([]);
+  await open('/snap'); // start from a clean device
+  await setMood('unreachable');
+  await open('/share?text=' + encodeURIComponent('shared in a lift') + '&title=Claude', {
+    keepMemory: true,
+  });
+  await waitFor("document.querySelector('.murmur')", 'a word');
+  check(
+    'a share with no signal says it is kept for later',
+    (await evaluate("return document.querySelector('.murmur')?.textContent;")) ===
+      'kept for when there is signal'
+  );
+  const waitingOnDevice = await held();
+  check(
+    'it is held on the device',
+    waitingOnDevice.length === 1 && waitingOnDevice[0].text === 'shared in a lift',
+    waitingOnDevice
+  );
+  check('and not yet in the collection', (await storedRows()).length === 0);
+
+  await open('/snap', { keepMemory: true });
+  await sleep(300);
+  await evaluate(`
+    const field = document.querySelector('.field');
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+    setter.call(field, 'written on a plane');
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+    document.querySelector('.keep').click();
+    return true;
+  `);
+  await sleep(900);
+  check(
+    'writing with no signal still returns to the nightly screen',
+    await evaluate("return location.pathname === '/';")
+  );
+  check('both are now held', (await held()).length === 2);
+
+  await setMood('up');
+  await sleep(2400); // let the share screen finish before reopening
+  await open('/', { keepMemory: true });
+  await sleep(1200);
+  const arrived = await storedRows();
+  check(
+    'once there is signal, everything held is sent',
+    arrived.map((row) => row.text).join(' / ') === 'shared in a lift / written on a plane',
+    arrived.map((row) => row.text)
+  );
+  check(
+    'with the moment it was kept, not the moment it arrived',
+    arrived[0]?.created_at === waitingOnDevice[0].created_at,
+    `${arrived[0]?.created_at} vs ${waitingOnDevice[0].created_at}`
+  );
+  check('the source survives the wait', arrived[0]?.source === 'claude', arrived[0]?.source);
+  check('and nothing is left held', (await held()).length === 0);
+
+  await open('/', { keepMemory: true });
+  await sleep(1000);
+  check('nothing is sent twice', (await storedRows()).length === 2);
+
+  await seed([]);
+  await open('/snap');
+  await setMood('refusing');
+  await open('/share?text=' + encodeURIComponent('refused'), { keepMemory: true });
+  await waitFor("document.querySelector('.murmur')", 'a word');
+  check(
+    'a database that refuses is reported, not waited out',
+    (await evaluate("return document.querySelector('.murmur')?.textContent;")) ===
+      'could not keep that' && (await held()).length === 0
+  );
+  await setMood('up');
+
+  // The app keeps its own files, so it can open at all without signal.
+  await open('/', { keepMemory: true });
+  const kept = await waitFor(
+    `(async () => {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration || !registration.active) return false;
+      const names = await caches.keys();
+      const shell = names.find((name) => name.startsWith('snapback-shell'));
+      if (!shell) return false;
+      const keys = (await (await caches.open(shell)).keys()).map((r) => new URL(r.url).pathname);
+      return keys.some((p) => p.endsWith('.js')) && keys.some((p) => p.endsWith('.css')) &&
+        keys.some((p) => p.endsWith('.woff2')) ? keys : false;
+    })()`,
+    'the offline copy',
+    10000
+  );
+  check('the app keeps its code, styles and typeface for offline use', Boolean(kept), kept);
+
   console.log('\n— the shape of it —');
 
   await seed([{ text: 'a sentence', resonance: 0 }]);

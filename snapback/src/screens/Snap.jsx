@@ -1,20 +1,23 @@
 import { useState } from 'react';
-import { save } from '../lib/selection';
+import { keep } from '../lib/selection';
 import { offerNotifications } from '../lib/notify';
 
 export default function Snap({ navigate }) {
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
+  const [refused, setRefused] = useState(false);
 
-  async function keep() {
+  async function submit() {
     if (busy || !text.trim()) return;
     setBusy(true);
     offerNotifications();
     try {
-      await save(text, 'self');
+      // Saved or held for later, either way the sentence is safe.
+      await keep(text, 'self');
       navigate('/');
     } catch (error) {
       console.error(error);
+      setRefused(true);
       setBusy(false);
     }
   }
@@ -32,8 +35,8 @@ export default function Snap({ navigate }) {
           aria-label="A sentence"
         />
       </div>
-      <button className="keep" onClick={keep} disabled={busy || !text.trim()}>
-        Keep
+      <button className="keep" onClick={submit} disabled={busy || !text.trim()}>
+        {refused ? 'Could not keep — try again' : 'Keep'}
       </button>
     </div>
   );

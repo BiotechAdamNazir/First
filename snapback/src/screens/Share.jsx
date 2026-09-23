@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { save } from '../lib/selection';
+import { keep } from '../lib/selection';
 
 // Where a sentence came from, guessed from whatever the sharing app told us.
 // The address is the reliable signal; some apps staple it into the text
@@ -25,7 +25,7 @@ function stripTrailingUrl(text) {
 }
 
 export default function Share({ navigate }) {
-  const [phase, setPhase] = useState('keeping'); // keeping | kept | nothing | trouble
+  const [phase, setPhase] = useState('keeping'); // keeping | kept | held | nothing | trouble
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -41,8 +41,8 @@ export default function Share({ navigate }) {
     }
 
     let live = true;
-    save(body, inferSource({ title, url, text }))
-      .then(() => live && setPhase('kept'))
+    keep(body, inferSource({ title, url, text }))
+      .then((outcome) => live && setPhase(outcome))
       .catch((error) => {
         console.error(error);
         if (live) setPhase('trouble');
@@ -61,13 +61,14 @@ export default function Share({ navigate }) {
     const timer = setTimeout(() => {
       window.close();
       navigate('/', { replace: true });
-    }, 1100);
+    }, phase === 'kept' ? 1100 : 2200); // longer words get longer to be read
     return () => clearTimeout(timer);
   }, [phase, navigate]);
 
   const words = {
     keeping: '',
     kept: 'kept',
+    held: 'kept for when there is signal',
     nothing: 'nothing to keep',
     trouble: 'could not keep that',
   };

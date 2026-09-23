@@ -158,14 +158,72 @@ export async function landed(snap) {
   if (error) throw error;
 }
 
-export async function save(text, source = 'self') {
+// A sentence that cannot reach the database is held on this device and sent
+// on the next chance, with the moment it was kept, so nothing shared in a
+// lift or on a plane is lost and its anniversary still falls on the right day.
+const HELD_KEY = 'snapback.held';
+
+function readHeld() {
+  try {
+    return JSON.parse(readStore(HELD_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function writeHeld(list) {
+  writeStore(HELD_KEY, JSON.stringify(list));
+}
+
+// Only a missing connection is worth waiting out. If the database answers and
+// refuses, holding the sentence would hide a problem that will not fix itself.
+function isUnreachable(error) {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return true;
+  return /fetch|network|load failed/i.test(String(error?.message ?? error));
+}
+
+async function insert(row) {
+  const { error } = await supabase.from('snaps').insert(row);
+  if (error) throw error;
+}
+
+// Returns 'kept' when saved, 'held' when waiting for signal, or null when
+// there was nothing to keep. Throws when the database refuses.
+export async function keep(text, source = 'self') {
   const trimmed = text.trim();
   if (!trimmed) return null;
-  const { data, error } = await supabase
-    .from('snaps')
-    .insert({ text: trimmed, source })
-    .select()
-    .limit(1);
-  if (error) throw error;
-  return data && data.length ? data[0] : null;
+  const keptAt = new Date().toISOString();
+  try {
+    await insert({ text: trimmed, source });
+    return 'kept';
+  } catch (error) {
+    if (!isUnreachable(error)) throw error;
+    writeHeld([...readHeld(), { text: trimmed, source, created_at: keptAt }]);
+    return 'held';
+  }
+}
+
+let sending = null;
+
+// Send anything held, oldest first, stopping at the first failure so the
+// rest keep their place.
+export function sendHeld() {
+  if (!supabase) return Promise.resolve();
+  if (!sending) {
+    sending = (async () => {
+      let held = readHeld();
+      while (held.length) {
+        try {
+          await insert(held[0]);
+        } catch {
+          return;
+        }
+        held = held.slice(1);
+        writeHeld(held);
+      }
+    })().finally(() => {
+      sending = null;
+    });
+  }
+  return sending;
 }

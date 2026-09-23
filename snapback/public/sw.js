@@ -3,19 +3,29 @@
 // Two jobs only: make the app installable (which is what puts it in Android's
 // share sheet), and speak once a night.
 
-const SHELL = 'snapback-shell-v1';
+const SHELL = 'snapback-shell-v2';
 const STATE = 'snapback-state-v1';
 
 const NOTIFY_HOUR = 21; // 21:00, Asia/Kuala_Lumpur
 const TZ = 'Asia/Kuala_Lumpur';
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches
-      .open(SHELL)
-      .then((cache) => cache.addAll(['/']))
-      .then(() => self.skipWaiting())
+// The page plus everything it names — its code, styles, typeface and icon —
+// so the app, and above all the share screen, opens with no signal at all.
+// The build gives these files new names whenever they change, so they are
+// read out of the page itself rather than listed here.
+async function keepShell() {
+  const cache = await caches.open(SHELL);
+  const page = await fetch('/', { cache: 'no-store' });
+  const html = await page.clone().text();
+  const files = [...html.matchAll(/(?:src|href)="(\/(?:assets|fonts|icons)\/[^"]+)"/g)].map(
+    (match) => match[1]
   );
+  await cache.put('/', page);
+  await cache.addAll([...new Set(files)]);
+}
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(keepShell().then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (event) => {
@@ -35,9 +45,33 @@ self.addEventListener('activate', (event) => {
 
 // Network first, so a deploy is picked up immediately; the cached shell is
 // only there so a cold start without signal still draws something.
+// Files whose names change with their contents never go stale, so once held
+// they are served from here without asking the network.
+const LASTING = /^\/(assets|fonts|icons)\//;
+
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  if (request.method !== 'GET' || request.mode !== 'navigate') return;
+  if (request.method !== 'GET') return;
+
+  const url = new URL(request.url);
+  if (url.origin === self.location.origin && LASTING.test(url.pathname)) {
+    event.respondWith(
+      caches.match(request).then(
+        (cached) =>
+          cached ||
+          fetch(request).then((response) => {
+            if (response.ok) {
+              const copy = response.clone();
+              caches.open(SHELL).then((cache) => cache.put(request, copy));
+            }
+            return response;
+          })
+      )
+    );
+    return;
+  }
+
+  if (request.mode !== 'navigate') return;
 
   event.respondWith(
     fetch(request)

@@ -28,6 +28,10 @@ const TYPES = {
 
 let rows = [];
 
+// 'up' answers normally; 'unreachable' drops the connection like a dead
+// signal would; 'refusing' answers with an error, like a misconfigured project.
+let mood = 'up';
+
 // --- filters ---------------------------------------------------------------
 
 function matches(row, column, expression) {
@@ -113,6 +117,7 @@ export function start(port = 5599) {
     // Test hooks.
     if (url.pathname === '/__seed' && request.method === 'POST') {
       const incoming = await readBody(request);
+      mood = 'up';
       rows = incoming.map((row) => ({
         id: row.id || randomUUID(),
         text: row.text,
@@ -124,6 +129,17 @@ export function start(port = 5599) {
       return json(response, { seeded: rows.length });
     }
     if (url.pathname === '/__rows') return json(response, rows);
+    if (url.pathname === '/__mood' && request.method === 'POST') {
+      mood = (await readBody(request)).mood;
+      return json(response, { mood });
+    }
+
+    if (url.pathname.startsWith('/rest/') && mood === 'unreachable') {
+      return request.socket.destroy();
+    }
+    if (url.pathname.startsWith('/rest/') && mood === 'refusing') {
+      return json(response, { message: 'new row violates row-level security policy', code: '42501' }, 401);
+    }
 
     if (url.pathname === '/rest/v1/snaps') {
       if (request.method === 'GET') {
@@ -134,7 +150,7 @@ export function start(port = 5599) {
         const created = {
           id: randomUUID(),
           text: body.text,
-          created_at: new Date().toISOString(),
+          created_at: body.created_at || new Date().toISOString(),
           source: body.source || 'self',
           resonance: 0,
           last_shown: null,

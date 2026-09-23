@@ -80,6 +80,22 @@ To check it worked: select some text anywhere, tap **Share**, and look for
 **Snapback** in the list. Tapping it saves the text and shows the word *kept*
 for a moment. There is no editing step and no confirmation — that is the point.
 
+### Without signal
+
+Sharing or writing with no signal does not lose the sentence. It is held on
+that device, the screen says *kept for when there is signal*, and it is sent
+the next time the app is opened with a connection, carrying the moment you
+kept it rather than the moment it arrived, so its anniversary still lands on
+the right night.
+
+Held sentences live on the device that kept them until they are sent. If the
+database is reachable but refuses (for instance, the setup SQL was never run),
+the screen says *could not keep that* instead of holding it, because waiting
+would not fix it.
+
+The nightly sentence does need signal. It is chosen by the database, which is
+what keeps it the same on every device.
+
 ---
 
 ## How the nightly sentence is chosen
@@ -182,9 +198,10 @@ npm run dev                  # a local copy at http://localhost:5173
 
 `npm run check` runs 17 checks on the date and drawing arithmetic, then builds
 the app, serves it against a stand-in for Supabase, and drives a real browser
-through 42 more: that one sentence comes back, that it does not move all day,
+through 54 more: that one sentence comes back, that it does not move all day,
 that the anniversary line appears, that the fourteen-day rest holds, that both
-write paths save, and that the share target is registered. It needs Chromium;
+write paths save, that nothing is lost without signal, and that the share
+target is registered. It needs Chromium;
 set `CHROME_PATH` if it is not at `/opt/pw-browsers/chromium`.
 
 There is no test framework and no test dependency — the browser is driven over
